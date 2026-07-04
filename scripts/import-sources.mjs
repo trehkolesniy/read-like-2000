@@ -96,7 +96,8 @@ const BLOG_URLS = [
   "https://publicdomainreview.org",
   "https://pluralistic.net",
   "https://waxy.org",
-  "https://kottke.org"
+  "https://kottke.org",
+  "https://www.bl.uk/stories/blogs/"
 ];
 
 const FEED_OVERRIDES = new Map([
@@ -114,6 +115,15 @@ const CUSTOM_SOURCES = new Map([
       siteUrl: "https://handwritten.danieljanus.pl/",
       feedUrl: "https://handwritten.danieljanus.pl/",
       parser: "dated-html-index"
+    }
+  ],
+  [
+    "https://www.bl.uk/stories/blogs/",
+    {
+      title: "British Library Blogs",
+      siteUrl: "https://www.bl.uk/stories/blogs/",
+      feedUrl: "https://www.bl.uk/stories/blogs/posts",
+      parser: "british-library-blog-index"
     }
   ]
 ]);

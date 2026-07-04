@@ -703,6 +703,14 @@
       "feedUrl": "https://feeds.kottke.org/main",
       "parser": "feed",
       "createdAt": "2026-07-04T07:14:43.370Z"
+    },
+    {
+      "id": "source-6c81dbace6f4",
+      "title": "British Library Blogs",
+      "siteUrl": "https://www.bl.uk/stories/blogs/",
+      "feedUrl": "https://www.bl.uk/stories/blogs/posts",
+      "parser": "british-library-blog-index",
+      "createdAt": "2026-07-04T08:10:57.000Z"
     }
   ]
 }

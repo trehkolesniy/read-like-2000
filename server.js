@@ -99,6 +99,29 @@ function attr(tag, name) {
   return match ? match[1].replace(/^["']|["']$/g, "") : "";
 }
 
+function decodeHtml(value = "") {
+  const named = {
+    amp: "&",
+    lt: "<",
+    gt: ">",
+    quot: "\"",
+    apos: "'",
+    nbsp: " "
+  };
+
+  return String(value).replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (entity, code) => {
+    const lower = code.toLowerCase();
+
+    if (lower.startsWith("#x")) return String.fromCodePoint(Number.parseInt(lower.slice(2), 16));
+    if (lower.startsWith("#")) return String.fromCodePoint(Number.parseInt(lower.slice(1), 10));
+    return named[lower] || entity;
+  });
+}
+
+function stripHtml(value = "") {
+  return decodeHtml(String(value).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+}
+
 function looksRussian(value = "") {
   const cyrillic = value.match(/[А-Яа-яЁё]/g)?.length || 0;
   const latin = value.match(/\p{Script=Latin}/gu)?.length || 0;
@@ -316,6 +339,11 @@ async function handleFeed(req, res, requestUrl) {
     return;
   }
 
+  if (source.parser === "british-library-blog-index") {
+    await handleBritishLibraryBlogIndex(res, source);
+    return;
+  }
+
   try {
     const response = await fetch(source.feedUrl, {
       headers: {
@@ -465,6 +493,95 @@ async function handleDatedHtmlIndex(res, source) {
     res.end(body);
   } catch (error) {
     sendJson(res, 502, { error: error instanceof Error ? error.message : "Could not fetch index" });
+  }
+}
+
+function parseBritishLibraryDate(value) {
+  const match = String(value || "").trim().match(/^(\d{1,2}) ([A-Za-z]+) (20\d{2})$/);
+  const months = {
+    january: 0,
+    february: 1,
+    march: 2,
+    april: 3,
+    may: 4,
+    june: 5,
+    july: 6,
+    august: 7,
+    september: 8,
+    october: 9,
+    november: 10,
+    december: 11
+  };
+
+  if (!match) return new Date();
+
+  return new Date(Date.UTC(Number(match[3]), months[match[2].toLowerCase()] ?? 0, Number(match[1])));
+}
+
+async function handleBritishLibraryBlogIndex(res, source) {
+  try {
+    const response = await fetch(source.feedUrl || source.siteUrl, {
+      headers: {
+        "accept": "text/html, */*;q=0.8",
+        "user-agent": "ReadLike2000/0.1"
+      },
+      signal: AbortSignal.timeout(25000)
+    });
+
+    if (!response.ok) {
+      sendJson(res, response.status, { error: `British Library index responded with ${response.status}` });
+      return;
+    }
+
+    const html = await response.text();
+    const base = source.siteUrl || source.feedUrl;
+    const itemPattern = /<a\b[^>]+href="(\/stories\/blogs\/posts\/[^"]+)"[\s\S]*?<h3\b[^>]*>([\s\S]*?)<\/h3>[\s\S]*?<span\b[^>]*ListCard[^>]*subtitle[^>]*>([\s\S]*?)<\/span>[\s\S]*?<p\b[^>]*ListCard[^>]*description[^>]*>([\s\S]*?)<\/p>/gi;
+    const seen = new Set();
+    const items = [];
+
+    for (const match of html.matchAll(itemPattern)) {
+      const url = new URL(decodeHtml(match[1]), base).toString();
+
+      if (seen.has(url)) continue;
+      seen.add(url);
+
+      items.push({
+        url,
+        title: stripHtml(match[2]),
+        date: parseBritishLibraryDate(stripHtml(match[3])),
+        description: stripHtml(match[4])
+      });
+    }
+
+    const itemXml = items
+      .sort((a, b) => b.date - a.date)
+      .map((item) => `
+        <item>
+          <title>${escapeXml(item.title)}</title>
+          <link>${escapeXml(item.url)}</link>
+          <guid>${escapeXml(item.url)}</guid>
+          <pubDate>${item.date.toUTCString()}</pubDate>
+          <description>${escapeXml(item.description)}</description>
+        </item>`)
+      .join("");
+
+    const body = `<?xml version="1.0" encoding="UTF-8"?>
+      <rss version="2.0">
+        <channel>
+          <title>${escapeXml(source.title)}</title>
+          <link>${escapeXml(source.siteUrl)}</link>
+          <description>${escapeXml("Latest British Library blog posts")}</description>
+          ${itemXml}
+        </channel>
+      </rss>`;
+
+    res.writeHead(200, {
+      "content-type": "application/rss+xml; charset=utf-8",
+      "cache-control": "no-store"
+    });
+    res.end(body);
+  } catch (error) {
+    sendJson(res, 502, { error: error instanceof Error ? error.message : "Could not fetch British Library blog index" });
   }
 }
 
