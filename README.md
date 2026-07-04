@@ -1,31 +1,31 @@
 # Read Like 2000
 
-Локальная читалка для личной ленты блогов. Источники хранятся в явном реестре, публикации собираются в хронологическую ленту, новые материалы помечаются, краткие описания переводятся на русский и кэшируются локально.
+Read Like 2000 is a local blog reader for a personal, curated feed. Sources are stored in an explicit registry, posts are merged into a chronological timeline, new items are marked, and short previews can be translated into Russian with a local cache.
 
-## Запуск
+## Run
 
 ```bash
 npm start
 ```
 
-По умолчанию сайт будет доступен на `http://localhost:4173`.
+By default, the app runs at `http://localhost:4173`.
 
-## Проверка
+## Check
 
 ```bash
 npm run check
 ```
 
-## Источники
+## Sources
 
-Основной список блогов лежит в `data/sources.json`. Сервер не принимает произвольные URL для загрузки фида: `/api/feed` работает только с зарегистрированным `source id`.
+The main blog list lives in `data/sources.json`. The server does not fetch arbitrary feed URLs: `/api/feed` only works with a registered `source id`.
 
-Чтобы пересобрать список источников из встроенного списка блогов:
+To rebuild the source registry from the built-in blog list:
 
 ```bash
 npm run import:sources
 ```
 
-## Переводы
+## Translations
 
-Краткие описания переводятся на русский через серверный endpoint `/api/translations`. Локальный кэш переводов хранится в `data/translations.json` и не коммитится.
+Short previews are translated into Russian through the server endpoint `/api/translations`. The local translation cache is stored in `data/translations.json` and is not committed.
