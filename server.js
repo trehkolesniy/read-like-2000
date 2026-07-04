@@ -10,8 +10,16 @@ const dataDir = path.join(__dirname, "data");
 const sourcesFile = path.join(dataDir, "sources.json");
 const translationsFile = path.join(dataDir, "translations.json");
 const port = Number(process.env.PORT || 4173);
-const openAiModel = process.env.OPENAI_TRANSLATION_MODEL || "gpt-5.5";
-const openAiBaseUrl = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
+const translationProvider = "google-translate";
+const translationCacheVersion = "google-preview-v2";
+const translationsDisabled = process.env.DISABLE_TRANSLATIONS === "1";
+const googleTranslateEndpoint = "https://translate.googleapis.com/translate_a/single";
+const previewMarkers = {
+  titleStart: "RL2K_TITLE_START",
+  titleEnd: "RL2K_TITLE_END",
+  descriptionStart: "RL2K_DESCRIPTION_START",
+  descriptionEnd: "RL2K_DESCRIPTION_END"
+};
 
 const contentTypes = {
   ".html": "text/html; charset=utf-8",
@@ -144,14 +152,91 @@ function normalizePreviewText(text, maxLength) {
   return String(text || "").replace(/\s+/g, " ").trim().slice(0, maxLength);
 }
 
-function responseOutputText(response) {
-  if (typeof response.output_text === "string") return response.output_text;
+function normalizeTranslationInput(text, maxLength) {
+  return String(text || "")
+    .replace(/\r\n?/g, "\n")
+    .replace(/[ \t\f\v]+/g, " ")
+    .replace(/\n[ \t]+/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim()
+    .slice(0, maxLength);
+}
 
-  return (response.output || [])
-    .flatMap((item) => item.content || [])
-    .map((content) => content.text || "")
-    .join("")
-    .trim();
+function protectTranslationText(text) {
+  const tokens = [];
+  const protectedText = String(text).replace(
+    /`[^`]+`|https?:\/\/[^\s<>"']+|www\.[^\s<>"']+|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/g,
+    (value) => {
+      const placeholder = `RL2K_TOKEN_${tokens.length}`;
+      tokens.push({ placeholder, value });
+      return placeholder;
+    }
+  );
+
+  return { text: protectedText, tokens };
+}
+
+function restoreTranslationText(text, tokens) {
+  return tokens.reduce((value, token) => value.replaceAll(token.placeholder, token.value), text);
+}
+
+async function translateTextToRussian(text, options = {}) {
+  const normalized = normalizeTranslationInput(text, 1800);
+
+  if (!normalized || (!options.force && looksRussian(normalized))) {
+    return normalized;
+  }
+
+  const protectedText = protectTranslationText(normalized);
+  const params = new URLSearchParams({
+    client: "gtx",
+    sl: "auto",
+    tl: "ru",
+    hl: "ru",
+    dt: "t",
+    q: protectedText.text
+  });
+
+  const response = await fetch(`${googleTranslateEndpoint}?${params}`, {
+    headers: {
+      "accept": "application/json, text/javascript, */*;q=0.8",
+      "user-agent": "ReadLike2000/0.1"
+    },
+    signal: AbortSignal.timeout(20000)
+  });
+
+  if (!response.ok) {
+    throw new Error(`Google Translate responded with ${response.status}`);
+  }
+
+  const data = await response.json();
+  const translated = Array.isArray(data?.[0]) ? data[0].map((part) => part?.[0] || "").join("") : "";
+  return restoreTranslationText(translated.trim(), protectedText.tokens) || normalized;
+}
+
+function textBetween(value, start, end) {
+  const startIndex = value.indexOf(start);
+
+  if (startIndex === -1) return null;
+
+  const contentStart = startIndex + start.length;
+  const endIndex = value.indexOf(end, contentStart);
+
+  if (endIndex === -1) return null;
+
+  return value.slice(contentStart, endIndex).replace(/\s+/g, " ").trim();
+}
+
+function parseTranslatedPreviewBlock(value) {
+  const title = textBetween(value, previewMarkers.titleStart, previewMarkers.titleEnd);
+  const description = textBetween(value, previewMarkers.descriptionStart, previewMarkers.descriptionEnd);
+
+  if (title === null || description === null) return null;
+
+  return {
+    title: normalizePreviewText(title, 240),
+    description: normalizePreviewText(description, 1200)
+  };
 }
 
 async function translatePreviewToRussian({ title, description }) {
@@ -162,65 +247,31 @@ async function translatePreviewToRussian({ title, description }) {
     return { title: normalizedTitle, description: normalizedDescription };
   }
 
-  if (looksRussian(normalizedTitle) && (!normalizedDescription || looksRussian(normalizedDescription))) {
+  if ((!normalizedTitle || looksRussian(normalizedTitle)) && (!normalizedDescription || looksRussian(normalizedDescription))) {
     return { title: normalizedTitle, description: normalizedDescription };
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY is not set");
+  const previewBlock = [
+    previewMarkers.titleStart,
+    normalizedTitle,
+    previewMarkers.titleEnd,
+    previewMarkers.descriptionStart,
+    normalizedDescription,
+    previewMarkers.descriptionEnd
+  ].join("\n");
+  const translatedBlock = await translateTextToRussian(previewBlock, { force: true });
+  const parsed = parseTranslatedPreviewBlock(translatedBlock);
+
+  if (parsed) {
+    return {
+      title: parsed.title || normalizedTitle,
+      description: parsed.description || normalizedDescription
+    };
   }
-
-  const response = await fetch(`${openAiBaseUrl}/responses`, {
-    method: "POST",
-    headers: {
-      "authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      model: openAiModel,
-      store: false,
-      instructions: [
-        "Translate blog feed preview metadata into natural Russian.",
-        "Preserve names, URLs, code identifiers, product names, and quoted titles when appropriate.",
-        "Do not add commentary, summaries, explanations, markdown, or facts not present in the source.",
-        "Keep the translation concise and useful for quickly deciding whether to read the article."
-      ].join(" "),
-      input: JSON.stringify({
-        title: normalizedTitle,
-        description: normalizedDescription
-      }),
-      text: {
-        format: {
-          type: "json_schema",
-          name: "blog_preview_translation",
-          strict: true,
-          schema: {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-              title: { type: "string" },
-              description: { type: "string" }
-            },
-            required: ["title", "description"]
-          }
-        }
-      }
-    }),
-    signal: AbortSignal.timeout(45000)
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`OpenAI translation responded with ${response.status}: ${errorText.slice(0, 240)}`);
-  }
-
-  const data = await response.json();
-  const text = responseOutputText(data);
-  const translated = JSON.parse(text);
 
   return {
-    title: normalizePreviewText(translated.title || normalizedTitle, 240),
-    description: normalizePreviewText(translated.description || normalizedDescription, 1200)
+    title: normalizedTitle ? await translateTextToRussian(normalizedTitle) : "",
+    description: normalizedDescription ? await translateTextToRussian(normalizedDescription) : ""
   };
 }
 
@@ -251,8 +302,9 @@ function handleConfig(req, res) {
   }
 
   sendJson(res, 200, {
-    translationsAvailable: Boolean(process.env.OPENAI_API_KEY),
-    translationModel: openAiModel
+    translationsAvailable: !translationsDisabled,
+    translationProvider,
+    translationModel: "google-translate"
   });
 }
 
@@ -375,6 +427,11 @@ async function handleTranslations(req, res) {
     return;
   }
 
+  if (translationsDisabled) {
+    sendJson(res, 503, { error: "Translations are disabled" });
+    return;
+  }
+
   try {
     const body = await readJsonBody(req);
     const items = Array.isArray(body.items) ? body.items.slice(0, 24) : [];
@@ -389,7 +446,7 @@ async function handleTranslations(req, res) {
 
       if (!id || (!title && !description)) continue;
 
-      const key = cacheKey(`ru-preview:${title}\n${description}`);
+      const key = cacheKey(`${translationCacheVersion}:${title}\n${description}`);
 
       if (cache[key]?.translated) {
         translations[id] = cache[key].translated;
@@ -407,8 +464,8 @@ async function handleTranslations(req, res) {
         },
         translated,
         target: "ru",
-        provider: "openai",
-        model: openAiModel,
+        provider: translationProvider,
+        model: "gtx",
         updatedAt: new Date().toISOString()
       };
       translations[item.id] = translated;
@@ -418,11 +475,10 @@ async function handleTranslations(req, res) {
       await writeTranslations(cache);
     }
 
-    sendJson(res, 200, { translations });
+    sendJson(res, 200, { provider: translationProvider, translations });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not translate previews";
-    const status = message.includes("OPENAI_API_KEY") ? 503 : 502;
-    sendJson(res, status, { error: message });
+    sendJson(res, 502, { error: message });
   }
 }
 

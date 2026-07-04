@@ -2,6 +2,7 @@ const STORAGE_KEY = "read-like-2000-state";
 const NEW_WINDOW_MS = 1000 * 60 * 60 * 24 * 3;
 const TRANSLATION_BATCH_SIZE = 12;
 const AUTO_TRANSLATE_ALL_DELAY_MS = 500;
+const DEFAULT_TRANSLATION_PROVIDER = "google-translate";
 
 const initialState = {
   sources: [],
@@ -28,6 +29,7 @@ let translationObserver = null;
 let translationTimer = null;
 let translationRunning = false;
 let translationsAvailable = false;
+let translationProvider = DEFAULT_TRANSLATION_PROVIDER;
 const translationQueue = new Set();
 
 function loadState() {
@@ -177,7 +179,11 @@ function handleTranslationIntersections(entries) {
 }
 
 function shouldTranslatePost(post) {
-  return Boolean((post.title && !post.titleRu) || (post.description && !post.descriptionRu));
+  const translatedByCurrentProvider = post.translationProvider === translationProvider;
+  const needsTitle = post.title && (!post.titleRu || !translatedByCurrentProvider);
+  const needsDescription = post.description && (!post.descriptionRu || !translatedByCurrentProvider);
+
+  return Boolean(needsTitle || needsDescription);
 }
 
 function scheduleAllMissingTranslations() {
@@ -250,11 +256,13 @@ async function processTranslationQueue() {
 
       const data = await response.json();
       const translations = data.translations || {};
+      const provider = data.provider || translationProvider;
 
       for (const post of state.posts) {
         if (translations[post.id]) {
           post.titleRu = translations[post.id].title || post.titleRu;
           post.descriptionRu = translations[post.id].description || post.descriptionRu;
+          post.translationProvider = provider;
           updateRenderedTranslation(post);
         }
       }
@@ -262,9 +270,9 @@ async function processTranslationQueue() {
       saveState();
     }
 
-    setStatus("Заголовки и описания переведены.");
+    setStatus("Заголовки и описания переведены через Google Translate.");
   } catch {
-    setStatus("Часть заголовков и описаний пока осталась в оригинале. Проверь OPENAI_API_KEY.");
+    setStatus("Часть заголовков и описаний пока осталась в оригинале. Google Translate временно не ответил.");
   } finally {
     translationRunning = false;
 
@@ -328,9 +336,10 @@ async function loadConfig() {
 
     const config = await response.json();
     translationsAvailable = Boolean(config.translationsAvailable);
+    translationProvider = config.translationProvider || DEFAULT_TRANSLATION_PROVIDER;
 
     if (!translationsAvailable) {
-      setStatus("Перевод GPT отключен: добавь OPENAI_API_KEY и перезапусти сервер.");
+      setStatus("Автоперевод отключен на сервере.");
     }
 
     render();
