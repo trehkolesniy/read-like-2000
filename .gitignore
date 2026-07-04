@@ -3,6 +3,7 @@ node_modules/
 
 # Local runtime cache. It is recreated by the server.
 data/translations.json
+logs/
 
 # Local environment files.
 .env

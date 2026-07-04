@@ -10,6 +10,10 @@ npm start
 
 By default, the app runs at `http://localhost:4173`.
 
+## macOS Launcher
+
+The repository includes `scripts/launch-read-like-2000.command`. It starts the local server and opens the reader in the browser. A desktop shortcut can point to this script for one-click startup after a reboot.
+
 ## Check
 
 ```bash
