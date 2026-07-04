@@ -10,6 +10,8 @@ const dataDir = path.join(__dirname, "data");
 const sourcesFile = path.join(dataDir, "sources.json");
 const translationsFile = path.join(dataDir, "translations.json");
 const port = Number(process.env.PORT || 4173);
+const openAiModel = process.env.OPENAI_TRANSLATION_MODEL || "gpt-5.5";
+const openAiBaseUrl = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
 
 const contentTypes = {
   ".html": "text/html; charset=utf-8",
@@ -115,34 +117,88 @@ async function runLimited(items, limit, worker) {
   await Promise.all(workers);
 }
 
-async function translateTextToRussian(text) {
-  const normalized = String(text || "").replace(/\s+/g, " ").trim();
+function normalizePreviewText(text, maxLength) {
+  return String(text || "").replace(/\s+/g, " ").trim().slice(0, maxLength);
+}
 
-  if (!normalized || looksRussian(normalized)) return normalized;
+function responseOutputText(response) {
+  if (typeof response.output_text === "string") return response.output_text;
 
-  const params = new URLSearchParams({
-    client: "gtx",
-    sl: "auto",
-    tl: "ru",
-    dt: "t",
-    q: normalized
-  });
+  return (response.output || [])
+    .flatMap((item) => item.content || [])
+    .map((content) => content.text || "")
+    .join("")
+    .trim();
+}
 
-  const response = await fetch(`https://translate.googleapis.com/translate_a/single?${params}`, {
+async function translatePreviewToRussian({ title, description }) {
+  const normalizedTitle = normalizePreviewText(title, 240);
+  const normalizedDescription = normalizePreviewText(description, 1200);
+
+  if (!normalizedTitle && !normalizedDescription) {
+    return { title: normalizedTitle, description: normalizedDescription };
+  }
+
+  if (looksRussian(normalizedTitle) && (!normalizedDescription || looksRussian(normalizedDescription))) {
+    return { title: normalizedTitle, description: normalizedDescription };
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is not set");
+  }
+
+  const response = await fetch(`${openAiBaseUrl}/responses`, {
+    method: "POST",
     headers: {
-      "accept": "application/json, text/javascript, */*;q=0.8",
-      "user-agent": "ReadLike2000/0.1"
+      "authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+      "content-type": "application/json"
     },
-    signal: AbortSignal.timeout(15000)
+    body: JSON.stringify({
+      model: openAiModel,
+      store: false,
+      instructions: [
+        "Translate blog feed preview metadata into natural Russian.",
+        "Preserve names, URLs, code identifiers, product names, and quoted titles when appropriate.",
+        "Do not add commentary, summaries, explanations, markdown, or facts not present in the source.",
+        "Keep the translation concise and useful for quickly deciding whether to read the article."
+      ].join(" "),
+      input: JSON.stringify({
+        title: normalizedTitle,
+        description: normalizedDescription
+      }),
+      text: {
+        format: {
+          type: "json_schema",
+          name: "blog_preview_translation",
+          strict: true,
+          schema: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              title: { type: "string" },
+              description: { type: "string" }
+            },
+            required: ["title", "description"]
+          }
+        }
+      }
+    }),
+    signal: AbortSignal.timeout(45000)
   });
 
   if (!response.ok) {
-    throw new Error(`Translation responded with ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`OpenAI translation responded with ${response.status}: ${errorText.slice(0, 240)}`);
   }
 
   const data = await response.json();
-  const translated = Array.isArray(data?.[0]) ? data[0].map((part) => part?.[0] || "").join("") : "";
-  return translated.trim() || normalized;
+  const text = responseOutputText(data);
+  const translated = JSON.parse(text);
+
+  return {
+    title: normalizePreviewText(translated.title || normalizedTitle, 240),
+    description: normalizePreviewText(translated.description || normalizedDescription, 1200)
+  };
 }
 
 async function readJsonBody(req) {
@@ -163,6 +219,18 @@ function resolvePublicPath(pathname) {
   const normalized = path.normalize(decodeURIComponent(pathname)).replace(/^(\.\.[/\\])+/, "");
   const requested = normalized === "/" ? "/index.html" : normalized;
   return path.join(publicDir, requested);
+}
+
+function handleConfig(req, res) {
+  if (req.method !== "GET") {
+    sendJson(res, 405, { error: "Method not allowed" });
+    return;
+  }
+
+  sendJson(res, 200, {
+    translationsAvailable: Boolean(process.env.OPENAI_API_KEY),
+    translationModel: openAiModel
+  });
 }
 
 async function handleSources(req, res, requestUrl) {
@@ -281,32 +349,38 @@ async function handleTranslations(req, res) {
 
   try {
     const body = await readJsonBody(req);
-    const items = Array.isArray(body.items) ? body.items.slice(0, 40) : [];
+    const items = Array.isArray(body.items) ? body.items.slice(0, 24) : [];
     const cache = await readTranslations();
     const translations = {};
     const missing = [];
 
     for (const item of items) {
       const id = String(item?.id || "");
-      const text = String(item?.text || "").replace(/\s+/g, " ").trim().slice(0, 800);
+      const title = normalizePreviewText(item?.title, 240);
+      const description = normalizePreviewText(item?.description, 1200);
 
-      if (!id || !text) continue;
+      if (!id || (!title && !description)) continue;
 
-      const key = cacheKey(`ru:${text}`);
+      const key = cacheKey(`ru-preview:${title}\n${description}`);
 
       if (cache[key]?.translated) {
         translations[id] = cache[key].translated;
       } else {
-        missing.push({ id, text, key });
+        missing.push({ id, title, description, key });
       }
     }
 
-    await runLimited(missing, 4, async (item) => {
-      const translated = await translateTextToRussian(item.text);
+    await runLimited(missing, 2, async (item) => {
+      const translated = await translatePreviewToRussian(item);
       cache[item.key] = {
-        source: item.text,
+        source: {
+          title: item.title,
+          description: item.description
+        },
         translated,
         target: "ru",
+        provider: "openai",
+        model: openAiModel,
         updatedAt: new Date().toISOString()
       };
       translations[item.id] = translated;
@@ -318,7 +392,9 @@ async function handleTranslations(req, res) {
 
     sendJson(res, 200, { translations });
   } catch (error) {
-    sendJson(res, 502, { error: error instanceof Error ? error.message : "Could not translate descriptions" });
+    const message = error instanceof Error ? error.message : "Could not translate previews";
+    const status = message.includes("OPENAI_API_KEY") ? 503 : 502;
+    sendJson(res, status, { error: message });
   }
 }
 
@@ -399,6 +475,11 @@ const server = http.createServer(async (req, res) => {
   }
 
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+
+  if (requestUrl.pathname === "/api/config") {
+    handleConfig(req, res);
+    return;
+  }
 
   if (requestUrl.pathname === "/api/sources") {
     await handleSources(req, res, requestUrl);

@@ -4,6 +4,12 @@ Read Like 2000 is a local blog reader for a personal, curated feed. Sources are 
 
 ## Run
 
+Set an OpenAI API key if you want automatic title and preview translations:
+
+```bash
+export OPENAI_API_KEY="your_api_key_here"
+```
+
 ```bash
 npm start
 ```
@@ -28,4 +34,6 @@ npm run import:sources
 
 ## Translations
 
-Short previews are translated into Russian through the server endpoint `/api/translations`. The local translation cache is stored in `data/translations.json` and is not committed.
+Titles and short previews are translated into Russian through the server endpoint `/api/translations`. The app uses the OpenAI Responses API with `gpt-5.5` by default. To use a different model, set `OPENAI_TRANSLATION_MODEL`. To point at a compatible proxy or test server, set `OPENAI_BASE_URL`.
+
+The local translation cache is stored in `data/translations.json` and is not committed.

@@ -1,7 +1,7 @@
 const STORAGE_KEY = "read-like-2000-state";
 const NEW_WINDOW_MS = 1000 * 60 * 60 * 24 * 3;
 const TRANSLATION_BATCH_SIZE = 12;
-const AUTO_TRANSLATE_NEW_LIMIT = 80;
+const AUTO_TRANSLATE_ALL_DELAY_MS = 500;
 
 const initialState = {
   sources: [],
@@ -27,6 +27,7 @@ let state = loadState();
 let translationObserver = null;
 let translationTimer = null;
 let translationRunning = false;
+let translationsAvailable = false;
 const translationQueue = new Set();
 
 function loadState() {
@@ -92,6 +93,7 @@ function render() {
   renderSources();
   renderPosts();
   saveState();
+  scheduleAllMissingTranslations();
 }
 
 function renderSources() {
@@ -132,8 +134,10 @@ function renderPosts() {
     time.dateTime = post.publishedAt;
     time.textContent = formatRelativeTime(post.publishedAt);
     title.href = post.url;
-    title.textContent = post.title;
+    title.textContent = post.titleRu || post.title;
+    title.title = post.titleRu ? post.title : "";
     description.textContent = post.descriptionRu || post.description || "Описание не найдено.";
+    description.title = post.descriptionRu && post.description ? post.description : "";
 
     elements.feedList.append(node);
 
@@ -173,11 +177,29 @@ function handleTranslationIntersections(entries) {
 }
 
 function shouldTranslatePost(post) {
-  return Boolean(post.description && !post.descriptionRu);
+  return Boolean((post.title && !post.titleRu) || (post.description && !post.descriptionRu));
+}
+
+function scheduleAllMissingTranslations() {
+  if (!translationsAvailable) return;
+
+  window.clearTimeout(translationTimer);
+  translationTimer = window.setTimeout(() => {
+    translationTimer = null;
+    queueAllMissingTranslations();
+  }, AUTO_TRANSLATE_ALL_DELAY_MS);
+}
+
+function queueAllMissingTranslations() {
+  getSortedPosts()
+    .filter(shouldTranslatePost)
+    .forEach((post) => translationQueue.add(post.id));
+
+  processTranslationQueue();
 }
 
 function queueTranslation(postId) {
-  if (!postId) return;
+  if (!postId || !translationsAvailable) return;
 
   translationQueue.add(postId);
 
@@ -190,7 +212,7 @@ function queueTranslation(postId) {
 }
 
 async function processTranslationQueue() {
-  if (translationRunning) return;
+  if (translationRunning || !translationsAvailable) return;
 
   translationRunning = true;
 
@@ -202,13 +224,19 @@ async function processTranslationQueue() {
       const items = ids
         .map((id) => {
           const post = state.posts.find((item) => item.id === id);
-          return post && shouldTranslatePost(post) ? { id: post.id, text: post.description } : null;
+          return post && shouldTranslatePost(post)
+            ? {
+                id: post.id,
+                title: post.title,
+                description: post.description
+              }
+            : null;
         })
         .filter(Boolean);
 
       if (!items.length) continue;
 
-      setStatus("Перевожу описания...");
+      setStatus(`Перевожу заголовки и описания: осталось ${translationQueue.size + items.length}`);
 
       const response = await fetch("/api/translations", {
         method: "POST",
@@ -225,17 +253,18 @@ async function processTranslationQueue() {
 
       for (const post of state.posts) {
         if (translations[post.id]) {
-          post.descriptionRu = translations[post.id];
-          updateRenderedDescription(post.id, post.descriptionRu);
+          post.titleRu = translations[post.id].title || post.titleRu;
+          post.descriptionRu = translations[post.id].description || post.descriptionRu;
+          updateRenderedTranslation(post);
         }
       }
 
       saveState();
     }
 
-    setStatus("Видимые описания переведены.");
+    setStatus("Заголовки и описания переведены.");
   } catch {
-    setStatus("Часть описаний пока осталась в оригинале.");
+    setStatus("Часть заголовков и описаний пока осталась в оригинале. Проверь OPENAI_API_KEY.");
   } finally {
     translationRunning = false;
 
@@ -245,11 +274,17 @@ async function processTranslationQueue() {
   }
 }
 
-function updateRenderedDescription(postId, text) {
-  const node = [...document.querySelectorAll(".post")].find((item) => item.dataset.postId === postId);
+function updateRenderedTranslation(post) {
+  const node = [...document.querySelectorAll(".post")].find((item) => item.dataset.postId === post.id);
 
   if (node) {
-    node.querySelector("p").textContent = text;
+    const title = node.querySelector(".post-title");
+    const description = node.querySelector("p");
+
+    title.textContent = post.titleRu || post.title;
+    title.title = post.titleRu ? post.title : "";
+    description.textContent = post.descriptionRu || post.description || "Описание не найдено.";
+    description.title = post.descriptionRu && post.description ? post.description : "";
   }
 }
 
@@ -280,6 +315,27 @@ async function loadSources() {
     render();
   } catch {
     setStatus("Не получилось загрузить список блогов.");
+  }
+}
+
+async function loadConfig() {
+  try {
+    const response = await fetch("/api/config");
+
+    if (!response.ok) {
+      throw new Error("Could not load config");
+    }
+
+    const config = await response.json();
+    translationsAvailable = Boolean(config.translationsAvailable);
+
+    if (!translationsAvailable) {
+      setStatus("Перевод GPT отключен: добавь OPENAI_API_KEY и перезапусти сервер.");
+    }
+
+    render();
+  } catch {
+    setStatus("Не получилось проверить настройки перевода.");
   }
 }
 
@@ -328,7 +384,7 @@ async function addSource(title, rawFeedUrl) {
   render();
   const freshPosts = await fetchSource(source);
   render();
-  queueFreshPostTranslations(freshPosts);
+  queuePostTranslations(freshPosts);
 }
 
 async function refreshFeeds() {
@@ -365,7 +421,7 @@ async function refreshFeeds() {
   }
 
   render();
-  queueFreshPostTranslations(freshPosts);
+  queuePostTranslations(freshPosts);
 }
 
 async function runLimited(items, limit, worker) {
@@ -456,15 +512,14 @@ function mergePosts(posts) {
   const known = new Set(state.posts.map((post) => post.id));
   const freshPosts = posts.filter((post) => !known.has(post.id));
 
-  state.posts = [...state.posts, ...freshPosts].slice(-600);
+  state.posts = [...state.posts, ...freshPosts];
   return freshPosts;
 }
 
-function queueFreshPostTranslations(posts) {
+function queuePostTranslations(posts) {
   posts
     .filter(shouldTranslatePost)
     .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
-    .slice(0, AUTO_TRANSLATE_NEW_LIMIT)
     .forEach((post) => queueTranslation(post.id));
 }
 
@@ -489,4 +544,5 @@ elements.markReadButton.addEventListener("click", () => {
 });
 
 render();
+loadConfig();
 loadSources();
