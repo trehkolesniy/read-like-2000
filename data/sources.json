@@ -1,0 +1,708 @@
+{
+  "sources": [
+    {
+      "id": "source-f901ef5a3928",
+      "title": "CassandraPages",
+      "siteUrl": "https://cassandrapages.com/",
+      "feedUrl": "http://cassandrapages.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:12:50.959Z"
+    },
+    {
+      "id": "source-10e32b860b66",
+      "title": "The Splintered Mind",
+      "siteUrl": "https://schwitzsplinters.blogspot.com/",
+      "feedUrl": "http://feeds.feedburner.com/blogspot/FHhv",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:12:52.833Z"
+    },
+    {
+      "id": "source-9de747dc0840",
+      "title": "handwritten.danieljanus.pl",
+      "siteUrl": "https://handwritten.danieljanus.pl/",
+      "feedUrl": "https://handwritten.danieljanus.pl/",
+      "parser": "dated-html-index",
+      "createdAt": "2026-07-04T07:12:52.833Z"
+    },
+    {
+      "id": "source-fb745026e94f",
+      "title": "Bartosz Ciechanowski",
+      "siteUrl": "https://ciechanow.ski/",
+      "feedUrl": "https://ciechanow.ski/atom.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:12:54.049Z"
+    },
+    {
+      "id": "source-01223e41499c",
+      "title": "Abuse of Notation",
+      "siteUrl": "https://abuseofnotation.github.io/",
+      "feedUrl": "https://abuseofnotation.github.io/feed",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:12:54.576Z"
+    },
+    {
+      "id": "source-93d7de3d863a",
+      "title": "Jim Nielsen’s Blog",
+      "siteUrl": "https://blog.jim-nielsen.com/",
+      "feedUrl": "https://blog.jim-nielsen.com/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:12:55.433Z"
+    },
+    {
+      "id": "source-c38c03192af3",
+      "title": "Shady Characters",
+      "siteUrl": "https://shadycharacters.co.uk/",
+      "feedUrl": "https://shadycharacters.co.uk/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:12:57.059Z"
+    },
+    {
+      "id": "source-59353fd9106d",
+      "title": "Hundred Rabbits",
+      "siteUrl": "https://100r.co/",
+      "feedUrl": "https://100r.ca/links/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:12:58.120Z"
+    },
+    {
+      "id": "source-6ed272aa4506",
+      "title": "tonsky.me",
+      "siteUrl": "https://tonsky.me/",
+      "feedUrl": "https://tonsky.me/atom.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:12:58.769Z"
+    },
+    {
+      "id": "source-6774f18243f1",
+      "title": "12XU",
+      "siteUrl": "https://onetwoxu.de/",
+      "feedUrl": "https://onetwoxu.de/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:00.575Z"
+    },
+    {
+      "id": "source-9f845e3a37ad",
+      "title": "Lost Art Press",
+      "siteUrl": "https://blog.lostartpress.com/",
+      "feedUrl": "https://blog.lostartpress.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:03.167Z"
+    },
+    {
+      "id": "source-bbfab44545da",
+      "title": "Derek Sivers",
+      "siteUrl": "https://sive.rs/",
+      "feedUrl": "https://sive.rs/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:07.965Z"
+    },
+    {
+      "id": "source-d3f7408dc4b5",
+      "title": "LOW←TECH MAGAZINE English",
+      "siteUrl": "https://solar.lowtechmagazine.com/",
+      "feedUrl": "https://solar.lowtechmagazine.com/posts/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:08.728Z"
+    },
+    {
+      "id": "source-c66bf2c6c76b",
+      "title": "macwright.com",
+      "siteUrl": "https://macwright.com/",
+      "feedUrl": "https://macwright.com/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:09.427Z"
+    },
+    {
+      "id": "source-ddff9467bbb9",
+      "title": "Вастрик.ру",
+      "siteUrl": "https://vas3k.blog/",
+      "feedUrl": "https://vas3k.blog/rss/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:10.303Z"
+    },
+    {
+      "id": "source-6b84445f9e83",
+      "title": "Блог Ильи Бирмана",
+      "siteUrl": "https://ilyabirman.ru/meanwhile/",
+      "feedUrl": "https://ilyabirman.ru/meanwhile/rss/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:11.280Z"
+    },
+    {
+      "id": "source-a505950b1d5a",
+      "title": "Блог Сергея Короля",
+      "siteUrl": "https://sergeykorol.ru/blog/",
+      "feedUrl": "https://sergeykorol.ru/blog/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:11.987Z"
+    },
+    {
+      "id": "source-f5e8e1ee9e59",
+      "title": "Евгений Лепёхин",
+      "siteUrl": "https://lepekhin.ru/blog/",
+      "feedUrl": "https://lepekhin.ru/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:13.976Z"
+    },
+    {
+      "id": "source-e88e6a823f28",
+      "title": "Cassidy Williams",
+      "siteUrl": "https://cassidoo.co/",
+      "feedUrl": "https://cassidoo.co/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:14.656Z"
+    },
+    {
+      "id": "source-28057ccff1cb",
+      "title": "Dan Cohen – Vice Provost, Dean, and Professor at Northeastern University",
+      "siteUrl": "https://dancohen.org/",
+      "feedUrl": "https://dancohen.org/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:16.646Z"
+    },
+    {
+      "id": "source-630e907a85be",
+      "title": "Navendu Pottekkat - The Open Source Absolutist",
+      "siteUrl": "https://navendu.me/",
+      "feedUrl": "https://navendu.me/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:17.364Z"
+    },
+    {
+      "id": "source-a05f97c2253a",
+      "title": "V.H. Belvadi",
+      "siteUrl": "https://vhbelvadi.com/",
+      "feedUrl": "https://vhbelvadi.com/rss",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:18.302Z"
+    },
+    {
+      "id": "source-4c9c9b6ec15c",
+      "title": "Rodney Brooks",
+      "siteUrl": "https://rodneybrooks.com/blog/",
+      "feedUrl": "https://rodneybrooks.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:20.263Z"
+    },
+    {
+      "id": "source-a75a5bcb1d79",
+      "title": "Chris Shiflett",
+      "siteUrl": "https://shiflett.org/",
+      "feedUrl": "https://shiflett.org/feeds/blog",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:21.148Z"
+    },
+    {
+      "id": "source-aeaf4abb1c44",
+      "title": "Kevin Sent",
+      "siteUrl": "https://thekevinalexander.com/",
+      "feedUrl": "https://thekevinalexander.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:21.841Z"
+    },
+    {
+      "id": "source-3555d77f5788",
+      "title": "Pensive Ibex",
+      "siteUrl": "https://pensiveibex.com/",
+      "feedUrl": "https://pensiveibex.com/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:22.469Z"
+    },
+    {
+      "id": "source-c751f3bec199",
+      "title": "Noahie's Blog",
+      "siteUrl": "https://noahie.xyz/blog/",
+      "feedUrl": "https://noahie.xyz/blog/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:23.678Z"
+    },
+    {
+      "id": "source-dedae5c3fe46",
+      "title": "RasterWeb!",
+      "siteUrl": "https://rasterweb.net/raster/",
+      "feedUrl": "https://rasterweb.net/raster/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:25.317Z"
+    },
+    {
+      "id": "source-f3ac5eeb14e3",
+      "title": "Melanie Richards",
+      "siteUrl": "https://melanie-richards.com/",
+      "feedUrl": "https://melanie-richards.com/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:26.043Z"
+    },
+    {
+      "id": "source-efc724883183",
+      "title": "benkuhn.net",
+      "siteUrl": "https://www.benkuhn.net/",
+      "feedUrl": "https://www.benkuhn.net/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:26.747Z"
+    },
+    {
+      "id": "source-ba695d753b24",
+      "title": "Programming Posts & Notes on abhinavsarkar.net",
+      "siteUrl": "https://abhinavsarkar.net/",
+      "feedUrl": "https://abhinavsarkar.net/feed.atom",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:27.628Z"
+    },
+    {
+      "id": "source-94184ee6f03e",
+      "title": "Todepond dot com",
+      "siteUrl": "https://www.todepond.com/",
+      "feedUrl": "https://www.todepond.com/feed/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:27.966Z"
+    },
+    {
+      "id": "source-d46763246724",
+      "title": "Robin Rendle",
+      "siteUrl": "https://robinrendle.com/",
+      "feedUrl": "https://robinrendle.com/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:28.742Z"
+    },
+    {
+      "id": "source-25720c910805",
+      "title": "jzhao.xyz",
+      "siteUrl": "https://jzhao.xyz/",
+      "feedUrl": "https://jzhao.xyz/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:29.288Z"
+    },
+    {
+      "id": "source-3ae888b23af8",
+      "title": "brennan.day",
+      "siteUrl": "https://brennan.day/",
+      "feedUrl": "https://brennan.day/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:34.011Z"
+    },
+    {
+      "id": "source-2a9674670714",
+      "title": "Stefan Bohacek's Personal Website and Blog",
+      "siteUrl": "https://stefanbohacek.com/",
+      "feedUrl": "https://stefanbohacek.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:35.724Z"
+    },
+    {
+      "id": "source-8a5d0c0bc23d",
+      "title": "SLIME MOLD TIME MOLD",
+      "siteUrl": "https://slimemoldtimemold.com/",
+      "feedUrl": "https://slimemoldtimemold.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:36.410Z"
+    },
+    {
+      "id": "source-b922d9844b38",
+      "title": "The Bloggess",
+      "siteUrl": "https://thebloggess.com/",
+      "feedUrl": "https://thebloggess.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:36.875Z"
+    },
+    {
+      "id": "source-8310a11e3e01",
+      "title": "A Whole Lotta Nothing",
+      "siteUrl": "https://a.wholelottanothing.org/",
+      "feedUrl": "https://a.wholelottanothing.org/rss/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:37.583Z"
+    },
+    {
+      "id": "source-f7fd2e615cea",
+      "title": "Leaded Solder",
+      "siteUrl": "https://www.leadedsolder.com/",
+      "feedUrl": "https://www.leadedsolder.com/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:38.714Z"
+    },
+    {
+      "id": "source-b23ce8566475",
+      "title": "Brian Koberlein",
+      "siteUrl": "https://briankoberlein.com/",
+      "feedUrl": "https://briankoberlein.com/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:40.136Z"
+    },
+    {
+      "id": "source-8ee533dcddc0",
+      "title": "swissmiss",
+      "siteUrl": "https://www.swiss-miss.com/",
+      "feedUrl": "http://feeds2.feedburner.com/Swissmiss",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:42.848Z"
+    },
+    {
+      "id": "source-4d23eff3c15f",
+      "title": "how to save the world",
+      "siteUrl": "https://howtosavetheworld.ca/",
+      "feedUrl": "https://howtosavetheworld.ca/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:44.519Z"
+    },
+    {
+      "id": "source-ee88ccee47d6",
+      "title": "CJ Chilvers",
+      "siteUrl": "https://www.cjchilvers.com/",
+      "feedUrl": "https://www.cjchilvers.com/blog/rss/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:45.165Z"
+    },
+    {
+      "id": "source-6080b6c9f548",
+      "title": "The Homebound Symphony",
+      "siteUrl": "https://blog.ayjay.org/",
+      "feedUrl": "https://blog.ayjay.org/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:48.859Z"
+    },
+    {
+      "id": "source-2b6842e5f395",
+      "title": "Pedestrian Observations",
+      "siteUrl": "https://pedestrianobservations.com/",
+      "feedUrl": "https://pedestrianobservations.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:49.630Z"
+    },
+    {
+      "id": "source-99e8573b71b2",
+      "title": "Charlie's Diary",
+      "siteUrl": "https://www.antipope.org/charlie/blog-static/",
+      "feedUrl": "http://www.antipope.org/charlie/blog-static/atom.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:49.959Z"
+    },
+    {
+      "id": "source-add6935afd7f",
+      "title": "My journal — Ethan Marcotte’s website",
+      "siteUrl": "https://ethanmarcotte.com/",
+      "feedUrl": "https://ethanmarcotte.com/wrote/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:51.182Z"
+    },
+    {
+      "id": "source-5f535fbd9a98",
+      "title": "Restricted Data",
+      "siteUrl": "https://blog.nuclearsecrecy.com/",
+      "feedUrl": "https://blog.nuclearsecrecy.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:53.296Z"
+    },
+    {
+      "id": "source-f60365f2830f",
+      "title": "Analog Office",
+      "siteUrl": "https://analogoffice.net/",
+      "feedUrl": "https://analogoffice.net/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:55.513Z"
+    },
+    {
+      "id": "source-52340455962f",
+      "title": "The Personal Blog of Emily Gorcenski",
+      "siteUrl": "https://emilygorcenski.com/",
+      "feedUrl": "https://emilygorcenski.com/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:56.092Z"
+    },
+    {
+      "id": "source-64bbdcc5f913",
+      "title": "Jeremy Felt",
+      "siteUrl": "https://jeremyfelt.com/",
+      "feedUrl": "https://jeremyfelt.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:57.002Z"
+    },
+    {
+      "id": "source-c3af89001ea5",
+      "title": "Sean Gillies",
+      "siteUrl": "https://sgillies.net/",
+      "feedUrl": "https://sgillies.net/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:57.949Z"
+    },
+    {
+      "id": "source-bcaeaab424a8",
+      "title": "rotational by Alex Wiltshire",
+      "siteUrl": "https://rotational.co.uk/",
+      "feedUrl": "https://rotational.co.uk/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:58.539Z"
+    },
+    {
+      "id": "source-e12e1acb0b05",
+      "title": "Home on Harper Reed's Blog",
+      "siteUrl": "https://harper.blog/",
+      "feedUrl": "https://harper.blog/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:59.060Z"
+    },
+    {
+      "id": "source-a31a9f2e8ec1",
+      "title": "A working library",
+      "siteUrl": "https://aworkinglibrary.com/",
+      "feedUrl": "https://aworkinglibrary.com/feed/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:13:59.595Z"
+    },
+    {
+      "id": "source-af5900bbb67d",
+      "title": "Ludicity",
+      "siteUrl": "https://ludic.mataroa.blog/",
+      "feedUrl": "https://ludic.mataroa.blog/rss/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:01.539Z"
+    },
+    {
+      "id": "source-6db998f07462",
+      "title": "HELLO, I'M SETH WERKHEISER",
+      "siteUrl": "https://sethw.xyz/",
+      "feedUrl": "https://sethw.xyz/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:02.928Z"
+    },
+    {
+      "id": "source-86f768b8388e",
+      "title": "Personal Webpage of Blake Watson",
+      "siteUrl": "https://blakewatson.com/",
+      "feedUrl": "https://blakewatson.com/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:04.699Z"
+    },
+    {
+      "id": "source-0f70b30bfa7c",
+      "title": "Tracy Durnell's Mind Garden",
+      "siteUrl": "https://tracydurnell.com/",
+      "feedUrl": "https://tracydurnell.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:05.938Z"
+    },
+    {
+      "id": "source-5259203abb6d",
+      "title": "CogDogBlog",
+      "siteUrl": "https://cogdogblog.com/",
+      "feedUrl": "https://cogdogblog.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:08.500Z"
+    },
+    {
+      "id": "source-8cc3a209044f",
+      "title": "Overcoming Bias | Robin Hanson | Substack",
+      "siteUrl": "https://www.overcomingbias.com/",
+      "feedUrl": "https://www.overcomingbias.com/feed",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:09.383Z"
+    },
+    {
+      "id": "source-2395f3325e0f",
+      "title": "Works in Progress RSS Feed",
+      "siteUrl": "https://worksinprogress.co/",
+      "feedUrl": "https://worksinprogress.co/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:11.655Z"
+    },
+    {
+      "id": "source-5a166448bb12",
+      "title": "FlowingData",
+      "siteUrl": "https://flowingdata.com/",
+      "feedUrl": "https://flowingdata.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:12.517Z"
+    },
+    {
+      "id": "source-b927340ed91d",
+      "title": "Eukaryote Writes Blog",
+      "siteUrl": "https://eukaryotewritesblog.com/",
+      "feedUrl": "https://eukaryotewritesblog.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:13.219Z"
+    },
+    {
+      "id": "source-53777b2fb2eb",
+      "title": "DYNOMIGHT",
+      "siteUrl": "https://dynomight.net/",
+      "feedUrl": "https://dynomight.net/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:13.765Z"
+    },
+    {
+      "id": "source-8d9eb061a59b",
+      "title": "Essays · Gwern.net",
+      "siteUrl": "https://gwern.net/",
+      "feedUrl": "https://gwern.substack.com/feed",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:14.788Z"
+    },
+    {
+      "id": "source-9b1b8e2d987c",
+      "title": "Drew DeVault's blog",
+      "siteUrl": "https://drewdevault.com/",
+      "feedUrl": "https://drewdevault.com/blog/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:15.804Z"
+    },
+    {
+      "id": "source-92bdf96c479f",
+      "title": "Ned Batchelder's blog",
+      "siteUrl": "https://nedbatchelder.com/blog",
+      "feedUrl": "https://nedbatchelder.com/blog/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:16.893Z"
+    },
+    {
+      "id": "source-b6fd1c6f6b84",
+      "title": "Brendan Gregg's Blog",
+      "siteUrl": "https://www.brendangregg.com/blog/",
+      "feedUrl": "https://www.brendangregg.com/blog/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:20.135Z"
+    },
+    {
+      "id": "source-708480bf733c",
+      "title": "Hypercritical",
+      "siteUrl": "https://hypercritical.co/",
+      "feedUrl": "https://hypercritical.co/feeds/main",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:21.253Z"
+    },
+    {
+      "id": "source-3feaa3e96c55",
+      "title": "Manuel Moreale — Everything Feed",
+      "siteUrl": "https://manuelmoreale.com/interview/andy-baio",
+      "feedUrl": "https://manuelmoreale.com/feed/rss",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:22.201Z"
+    },
+    {
+      "id": "source-a7c21b74b7c3",
+      "title": "Kev Quirk",
+      "siteUrl": "https://kevquirk.com/",
+      "feedUrl": "https://kevquirk.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:23.224Z"
+    },
+    {
+      "id": "source-720219113471",
+      "title": "Rachel Andrew",
+      "siteUrl": "https://rachelandrew.co.uk/",
+      "feedUrl": "https://rachelandrew.co.uk/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:24.138Z"
+    },
+    {
+      "id": "source-da90f22ae8da",
+      "title": "Sara Soueidan — UI developer",
+      "siteUrl": "https://www.sarasoueidan.com/blog/",
+      "feedUrl": "https://www.sarasoueidan.com/blog/index.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:24.820Z"
+    },
+    {
+      "id": "source-cd14f26d238d",
+      "title": "daverupert.com",
+      "siteUrl": "https://daverupert.com/",
+      "feedUrl": "https://daverupert.com/atom.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:25.453Z"
+    },
+    {
+      "id": "source-782482da2600",
+      "title": "Maggie Appleton",
+      "siteUrl": "https://maggieappleton.com/",
+      "feedUrl": "https://maggieappleton.com/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:26.134Z"
+    },
+    {
+      "id": "source-f4b7bd00d83e",
+      "title": "The Casual Optimist",
+      "siteUrl": "https://www.casualoptimist.com/",
+      "feedUrl": "https://www.casualoptimist.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:29.337Z"
+    },
+    {
+      "id": "source-d89a27dd92d3",
+      "title": "Frank Chimero",
+      "siteUrl": "https://frankchimero.com/blog/",
+      "feedUrl": "https://frankchimero.com/feed.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:30.237Z"
+    },
+    {
+      "id": "source-0c3e90ed9fb1",
+      "title": "Interconnected",
+      "siteUrl": "https://interconnected.org/home/",
+      "feedUrl": "https://interconnected.org/home/feed",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:31.190Z"
+    },
+    {
+      "id": "source-d8448edeab10",
+      "title": "The Map Room",
+      "siteUrl": "https://www.maproomblog.com/",
+      "feedUrl": "https://www.maproomblog.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:32.521Z"
+    },
+    {
+      "id": "source-521d8758b5ab",
+      "title": "Present & Correct - Blog",
+      "siteUrl": "https://www.presentandcorrect.com/blogs/blog",
+      "feedUrl": "https://www.presentandcorrect.com/blogs/blog.atom",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:33.410Z"
+    },
+    {
+      "id": "source-a1d164eb5ab7",
+      "title": "Futility Closet",
+      "siteUrl": "https://www.futilitycloset.com/",
+      "feedUrl": "http://feeds.feedburner.com/FutilityCloset",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:35.081Z"
+    },
+    {
+      "id": "source-5488a442485a",
+      "title": "BLDGBLOG",
+      "siteUrl": "https://bldgblog.com/",
+      "feedUrl": "https://bldgblog.com/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:36.475Z"
+    },
+    {
+      "id": "source-cb1c3db1674b",
+      "title": "The Public Domain Review – Online journal dedicated to showcasing the most interesting and unusual out-of-copyright works available on the web",
+      "siteUrl": "https://publicdomainreview.org/",
+      "feedUrl": "https://publicdomainreview.org/rss.xml",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:37.622Z"
+    },
+    {
+      "id": "source-c5f20aec74aa",
+      "title": "Pluralistic: Daily links from Cory Doctorow",
+      "siteUrl": "https://pluralistic.net/",
+      "feedUrl": "https://pluralistic.net/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:41.198Z"
+    },
+    {
+      "id": "source-1c4858903f69",
+      "title": "Waxy.org",
+      "siteUrl": "https://waxy.org/",
+      "feedUrl": "https://waxy.org/feed/",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:42.095Z"
+    },
+    {
+      "id": "source-ba2ba0212f69",
+      "title": "kottke.org",
+      "siteUrl": "https://kottke.org/",
+      "feedUrl": "https://feeds.kottke.org/main",
+      "parser": "feed",
+      "createdAt": "2026-07-04T07:14:43.370Z"
+    }
+  ]
+}

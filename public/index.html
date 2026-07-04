@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Read Like 2000</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Источники">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">R</div>
+          <div>
+            <h1>Read Like 2000</h1>
+            <p>личная лента блогов</p>
+          </div>
+        </div>
+
+        <form class="source-form" id="sourceForm">
+          <label>
+            Название
+            <input id="sourceTitle" name="title" autocomplete="off" placeholder="Например, The Verge">
+          </label>
+          <label>
+            RSS / Atom
+            <input id="sourceUrl" name="url" type="url" required placeholder="https://example.com/feed.xml">
+          </label>
+          <button type="submit">Добавить блог</button>
+        </form>
+
+        <div class="source-head">
+          <span>Блоги</span>
+          <button class="icon-button" id="refreshButton" type="button" title="Обновить ленту" aria-label="Обновить ленту">
+            ↻
+          </button>
+        </div>
+        <div class="source-list" id="sourceList"></div>
+      </aside>
+
+      <main class="timeline">
+        <header class="topbar">
+          <div>
+            <h2>Лента</h2>
+            <p id="feedMeta">Публикации из добавленных блогов</p>
+          </div>
+          <div class="view-actions">
+            <button class="quiet-button" id="markReadButton" type="button">Прочитано</button>
+          </div>
+        </header>
+
+        <section class="status-line" id="statusLine" aria-live="polite"></section>
+        <section class="feed-list" id="feedList"></section>
+      </main>
+    </div>
+
+    <template id="sourceTemplate">
+      <article class="source-item">
+        <div>
+          <strong></strong>
+          <span></span>
+        </div>
+        <button class="icon-button" type="button" title="Удалить" aria-label="Удалить источник">×</button>
+      </article>
+    </template>
+
+    <template id="postTemplate">
+      <article class="post">
+        <div class="post-avatar" aria-hidden="true"></div>
+        <div class="post-body">
+          <div class="post-meta">
+            <strong></strong>
+            <span></span>
+            <time></time>
+            <span class="new-badge">новое</span>
+          </div>
+          <a class="post-title" target="_blank" rel="noreferrer"></a>
+          <p></p>
+        </div>
+      </article>
+    </template>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

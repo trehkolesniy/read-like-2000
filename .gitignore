@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+
+# Local runtime cache. It is recreated by the server.
+data/translations.json
+
+# Local environment files.
+.env
+.env.*

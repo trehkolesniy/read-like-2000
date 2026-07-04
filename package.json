@@ -1,0 +1,11 @@
+{
+  "name": "read-like-2000",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check public/app.js && node --check scripts/import-sources.mjs",
+    "import:sources": "node scripts/import-sources.mjs"
+  }
+}
